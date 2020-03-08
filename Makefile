@@ -4,6 +4,7 @@ branch=$(shell git rev-parse --abbrev-ref HEAD)
 tag=duckietown/$(repo):$(branch)
 
 build:
+	pur -r requirements.txt -f -m '*' -o requirements.resolved
 	docker build --pull  -t $(tag) .
 
 build-no-cache:
