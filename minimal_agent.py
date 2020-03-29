@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 
-
 from dataclasses import dataclass
 from typing import Tuple
 
 import numpy as np
 
-from aido_schemas import EpisodeStart, protocol_agent_duckiebot1, PWMCommands, Duckiebot1Commands, LEDSCommands, RGB, \
-    wrap_direct, Context, Duckiebot1Observations, JPGImage
+from aido_agents import get_blinking_LEDs_left, jpg2rgb
+from aido_schemas import (Duckiebot1Commands, Duckiebot1Observations, EpisodeStart,
+                          JPGImage, protocol_agent_duckiebot1, PWMCommands)
+from aido_schemas.protocol_agent import GetCommands
+from zuper_nodes_wrapper import Context, wrap_direct
 
 
 @dataclass
@@ -20,44 +22,39 @@ class MinimalAgent:
     config: MinimalAgentConfig = MinimalAgentConfig()
 
     def init(self, context: Context):
-        context.info('init()')
+        context.info("init()")
 
     def on_received_seed(self, data: int):
         np.random.seed(data)
 
     def on_received_episode_start(self, context: Context, data: EpisodeStart):
+        # This is called at the beginning of episode.
         context.info(f'Starting episode "{data.episode_name}".')
 
-    def on_received_observations(self, data: Duckiebot1Observations):
+    def on_received_observations(self, context: Context, data: Duckiebot1Observations):
+        # Get the JPG image
         camera: JPGImage = data.camera
+        # Convert to numpy array
         _rgb = jpg2rgb(camera.jpg_data)
 
-    def on_received_get_commands(self, context: Context):
+    def on_received_get_commands(self, context: Context, data: GetCommands):
+        # compute random commands
         l, u = self.config.pwm_left_interval
         pwm_left = np.random.uniform(l, u)
         l, u = self.config.pwm_right_interval
         pwm_right = np.random.uniform(l, u)
-
-        grey = RGB(0.0, 0.0, 0.0)
-        led_commands = LEDSCommands(grey, grey, grey, grey, grey)
         pwm_commands = PWMCommands(motor_left=pwm_left, motor_right=pwm_right)
+
+        # Set LEDs to the "blinking left" pattern
+        led_commands = get_blinking_LEDs_left(data.at_time)
+
+        # commands = PWM + LED
         commands = Duckiebot1Commands(pwm_commands, led_commands)
-        context.write('commands', commands)
+        # write them out
+        context.write("commands", commands)
 
     def finish(self, context: Context):
-        context.info('finish()')
-
-
-def jpg2rgb(image_data: bytes) -> np.ndarray:
-    """ Reads JPG bytes as RGB"""
-    from PIL import Image
-    import io
-    im = Image.open(io.BytesIO(image_data))
-    im = im.convert('RGB')
-    data = np.array(im)
-    assert data.ndim == 3
-    assert data.dtype == np.uint8
-    return data
+        context.info("finish()")
 
 
 def main() -> None:
@@ -66,5 +63,5 @@ def main() -> None:
     wrap_direct(node=node, protocol=protocol)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

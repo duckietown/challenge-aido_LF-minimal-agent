@@ -1,17 +1,23 @@
+AIDO_REGISTRY ?= docker.io
+PIP_INDEX_URL ?= https://pypi.org/simple
+
 repo=aidonode-random_agent
 # repo=$(shell basename -s .git `git config --get remote.origin.url`)
 branch=$(shell git rev-parse --abbrev-ref HEAD)
-tag=duckietown/$(repo):$(branch)
+tag=$(AIDO_REGISTRY)/duckietown/$(repo):$(branch)
 
-build:
-	pur -r requirements.txt -f -m '*' -o requirements.resolved
-	docker build --pull  -t $(tag) .
+update-reqs:
+	pur --index-url $(PIP_INDEX_URL) -r requirements.txt -f -m '*' -o requirements.resolved
+	aido-update-reqs requirements.resolved
 
-build-no-cache:
+build: update-reqs
+	docker build --pull -t $(tag) .
+
+build-no-cache: update-reqs
 	docker build --pull -t $(tag)  --no-cache .
 
-#push: build
-#	docker push $(tag)
+push: build
+	docker push $(tag)
 
 test-data1-direct:
 	./minimal_agent.py < test_data/in1.json > test_data/out1.json
@@ -20,9 +26,12 @@ test-data1-docker:
 	docker run -i $(tag) < test_data/in1.json > test_data/out1.json
 
 
-submit:
+submit: update-reqs
 	dts challenges submit
 
+
+submit-bea: update-reqs
+	dts challenges submit --impersonate 1639 --challenge all --retire-same-label
 
 # submit-robotarium:
 # 	dts challenges submit --challenge aido2_LF_r_pri,aido2_LF_r_pub
