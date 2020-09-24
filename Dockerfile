@@ -6,6 +6,7 @@ ENV PIP_INDEX_URL=${PIP_INDEX_URL}
 
 
 COPY requirements.* ./
+RUN pip install -U pip>=20.2
 RUN pip install --use-feature=2020-resolver -r requirements.resolved
 RUN pip list
 
