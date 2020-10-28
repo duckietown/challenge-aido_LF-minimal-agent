@@ -4,12 +4,12 @@ from dataclasses import dataclass
 from typing import Tuple
 
 import numpy as np
+from zuper_nodes_wrapper import Context, wrap_direct
 
 from aido_agents import get_blinking_LEDs_left, jpg2rgb
-from aido_schemas import (Duckiebot1Commands, Duckiebot1Observations, EpisodeStart,
-                          JPGImage, protocol_agent_duckiebot1, PWMCommands)
+from aido_schemas import (DB20Commands, DB20Observations, EpisodeStart,
+                          JPGImage, protocol_agent_DB20, PWMCommands)
 from aido_schemas.protocol_agent import GetCommands
-from zuper_nodes_wrapper import Context, wrap_direct
 
 
 @dataclass
@@ -31,7 +31,7 @@ class MinimalAgent:
         # This is called at the beginning of episode.
         context.info(f'Starting episode "{data.episode_name}".')
 
-    def on_received_observations(self, context: Context, data: Duckiebot1Observations):
+    def on_received_observations(self, context: Context, data: DB20Observations):
         # Get the JPG image
         camera: JPGImage = data.camera
         # Convert to numpy array
@@ -49,7 +49,7 @@ class MinimalAgent:
         led_commands = get_blinking_LEDs_left(data.at_time)
 
         # commands = PWM + LED
-        commands = Duckiebot1Commands(pwm_commands, led_commands)
+        commands = DB20Commands(pwm_commands, led_commands)
         # write them out
         context.write("commands", commands)
 
@@ -59,7 +59,7 @@ class MinimalAgent:
 
 def main() -> None:
     node = MinimalAgent()
-    protocol = protocol_agent_duckiebot1
+    protocol = protocol_agent_DB20
     wrap_direct(node=node, protocol=protocol)
 
 
