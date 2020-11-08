@@ -6,7 +6,8 @@ from typing import Tuple
 import numpy as np
 from zuper_nodes_wrapper import Context, wrap_direct
 
-from aido_agents import get_blinking_LEDs_left, jpg2rgb
+from aido_agents import jpg2rgb
+from aido_agents.utils_leds import get_rotation
 from aido_schemas import (DB20Commands, DB20Observations, EpisodeStart,
                           JPGImage, protocol_agent_DB20, PWMCommands)
 from aido_schemas.protocol_agent import GetCommands
@@ -45,8 +46,8 @@ class MinimalAgent:
         pwm_right = np.random.uniform(l, u)
         pwm_commands = PWMCommands(motor_left=pwm_left, motor_right=pwm_right)
 
-        # Set LEDs to the "blinking left" pattern
-        led_commands = get_blinking_LEDs_left(data.at_time)
+        # Set LEDs to a testing pattern
+        led_commands = get_rotation(data.at_time)
 
         # commands = PWM + LED
         commands = DB20Commands(pwm_commands, led_commands)
