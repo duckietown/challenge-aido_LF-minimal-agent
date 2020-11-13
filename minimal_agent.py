@@ -4,13 +4,10 @@ from dataclasses import dataclass
 from typing import Tuple
 
 import numpy as np
-from zuper_nodes_wrapper import Context, wrap_direct
 
-from aido_agents import jpg2rgb
-from aido_agents.utils_leds import get_rotation
-from aido_schemas import (DB20Commands, DB20Observations, EpisodeStart,
-                          JPGImage, protocol_agent_DB20, PWMCommands)
-from aido_schemas.protocol_agent import GetCommands
+from aido_agents import get_rotation, jpg2rgb
+from aido_schemas import (Context, DB20Commands, DB20Observations, EpisodeStart, GetCommands, JPGImage,
+                          protocol_agent_DB20, PWMCommands, wrap_direct)
 
 
 @dataclass

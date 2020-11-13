@@ -14,7 +14,7 @@ submit:
 
 
 submit-bea:
-	dts challenges submit --impersonate 1639 --challenge all --retire-same-label
+	dts challenges submit --impersonate 1639 --challenge all --retire-same-label --priority 75
 
 # submit-robotarium:
 # 	dts challenges submit --challenge aido2_LF_r_pri,aido2_LF_r_pub
