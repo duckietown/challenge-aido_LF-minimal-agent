@@ -15,8 +15,8 @@ jobs:
           password: $DOCKER_PASSWORD
     steps:
       - checkout
-#      - setup_remote_docker:
-#          docker_layer_caching: true
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: Python stats
           command: |
@@ -50,7 +50,11 @@ jobs:
           name: Submit
           # language=bash
           command: |
+            set -x
             dts challenges evaluate --challenge aido-hello-sim-validation
+            name="$CIRCLE_BRANCH-$CIRCLE_SHA1"
+            dts challenges submit --impersonate 1639 --challenge aido-hello-sim-validation --user-label ${name}
+            dts challenges follow --label ${name}
 
 
 #  submit:
