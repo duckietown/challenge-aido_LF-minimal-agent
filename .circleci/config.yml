@@ -30,16 +30,19 @@ jobs:
           name: Setup daffy commands
           # language=bash
           command: |
+            set -x
             dts --set-version $DTS_VERSION
             dts update
       - run:
           name: Setup token
           # language=bash
           command: |
+            set -x
             dts tok verify ${token_dt1_bea}
             dts tok set ${token_dt1_bea}
             # this does not matter on the staging server
             dts challenges config --docker-server $DOCKER_REGISTRY --docker-username $DOCKER_USERNAME --docker-password $DOCKER_PASSWORD
+            dts challenges config --docker-server registry-stage.duckietown.org --docker-username $DOCKER_USERNAME --docker-password $DOCKER_PASSWORD
       - run:
           name: "Challenges info"
           # language=bash
@@ -54,7 +57,7 @@ jobs:
             dts challenges evaluate --challenge aido-hello-sim-validation
             name="$CIRCLE_BRANCH-$CIRCLE_SHA1"
             dts challenges submit --impersonate 1639 --challenge aido-hello-sim-validation --user-label ${name}
-            dts challenges follow --label ${name}
+            dts challenges follow --label "${name}"
 
 
 #  submit:
