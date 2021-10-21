@@ -13,9 +13,7 @@ from aido_schemas import (
     EpisodeStart,
     GetCommands,
     JPGImage,
-    protocol_agent_DB20,
     PWMCommands,
-    wrap_direct,
 )
 
 
@@ -62,13 +60,3 @@ class MinimalAgent:
 
     def finish(self, context: Context):
         context.info("finish()")
-
-
-def main() -> None:
-    node = MinimalAgent()
-    protocol = protocol_agent_DB20
-    wrap_direct(node=node, protocol=protocol)
-
-
-if __name__ == "__main__":
-    main()

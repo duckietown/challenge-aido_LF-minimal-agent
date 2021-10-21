@@ -18,6 +18,6 @@ RUN python3 -m pip list
 
 COPY . .
 
-RUN PYTHON_PATH=. python3 -c "import minimal_agent"
+RUN node-launch --config node_launch.yaml --check
 
-ENTRYPOINT ["python3", "minimal_agent.py"]
+ENTRYPOINT ["node-launch", "--config", "node_launch.yaml"]
