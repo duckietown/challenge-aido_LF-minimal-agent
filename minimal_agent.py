@@ -6,8 +6,17 @@ from typing import Tuple
 import numpy as np
 
 from aido_agents import get_rotation, jpg2rgb
-from aido_schemas import (Context, DB20Commands, DB20Observations, EpisodeStart, GetCommands, JPGImage,
-                          protocol_agent_DB20, PWMCommands, wrap_direct)
+from aido_schemas import (
+    Context,
+    DB20Commands,
+    DB20Observations,
+    EpisodeStart,
+    GetCommands,
+    JPGImage,
+    protocol_agent_DB20,
+    PWMCommands,
+    wrap_direct,
+)
 
 
 @dataclass
